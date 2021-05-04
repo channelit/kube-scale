@@ -1,0 +1,45 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: scale-up
+  namespace: scaler
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:latest
+            imagePullPolicy: Never
+            args: 
+              - patch
+              - hpa
+              - php-apache
+              - ---patch '{\"spec\":{\"minReplicas\":15}}'
+          serviceAccountName: scaler-service-account
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: scale-down
+  namespace: scaler
+spec:
+  schedule: "*/7 * * * *" 
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:latest
+            imagePullPolicy: Never
+            args: 
+              - patch
+              - hpa
+              - php-apache
+              - ---patch '{\"spec\":{\"minReplicas\":1}}'
+          serviceAccountName: scaler-service-account
