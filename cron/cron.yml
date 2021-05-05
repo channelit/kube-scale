@@ -18,7 +18,7 @@ spec:
               - patch
               - hpa
               - php-apache
-              - -p {"spec":{"minReplicas":10}}
+              - -p {"spec":{"minReplicas":10, "maxReplicas":10}}
           serviceAccountName: scaler-service-account
 ---
 apiVersion: batch/v1beta1
@@ -41,5 +41,5 @@ spec:
               - patch
               - hpa
               - php-apache
-              - -p {"spec":{"minReplicas":1}}
+              - -p {"spec":{"minReplicas":1, "maxReplicas":1}}
           serviceAccountName: scaler-service-account
