@@ -4,21 +4,21 @@ metadata:
   name: scale-up
   namespace: scaler
 spec:
-  schedule: "*/5 * * * *"
+  schedule: "0,5,10,15,20,25,30,35,40,45,50,55  * * * *"
   jobTemplate:
     spec:
       template:
         spec:
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
           - name: kubectl
             image: bitnami/kubectl:latest
             imagePullPolicy: Never
-            args: 
+            args:
               - patch
               - hpa
               - php-apache
-              - ---patch '{\"spec\":{\"minReplicas\":15}}'
+              - -p {"spec":{"minReplicas":10}}
           serviceAccountName: scaler-service-account
 ---
 apiVersion: batch/v1beta1
@@ -27,19 +27,19 @@ metadata:
   name: scale-down
   namespace: scaler
 spec:
-  schedule: "*/7 * * * *" 
+  schedule: "2,7,12,17,22,27,32,37,42,47,52,57  * * * *" 
   jobTemplate:
     spec:
       template:
         spec:
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
           - name: kubectl
             image: bitnami/kubectl:latest
             imagePullPolicy: Never
-            args: 
+            args:
               - patch
               - hpa
               - php-apache
-              - ---patch '{\"spec\":{\"minReplicas\":1}}'
+              - -p {"spec":{"minReplicas":1}}
           serviceAccountName: scaler-service-account
